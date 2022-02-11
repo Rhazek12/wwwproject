@@ -3,13 +3,27 @@
         <title>Pruebas HTML</title>
     </head>
     <body>
-        <form action="busqueda_cliente/" method="GET">
+        <form action="busqueda_usuario/" method="GET">
             <label>Nombre</label>
             <input type="text" name="nombre">
             <label>Rol</label>
             <input type="text" name="rol">
             <label>Contrasena</label>
             <input type="text" name="contrasena">
+            <input type="submit" value="enviar">
+        </form>
+        <form action="crear_usuario/" method="GET">
+            <label>Nombre</label>
+            <input type="text" name="nombre">
+            <label>Rol</label>
+            <input type="text" name="rol">
+            <label>Contrasena</label>
+            <input type="text" name="contrasena">
+            <input type="submit" value="enviar">
+        </form>
+        <form action="eliminar_usuario/" method="GET">
+            <label>id</label>
+            <input type="text" name="id">
             <input type="submit" value="enviar">
         </form>
     </body>

@@ -1,14 +1,15 @@
 from django.http import HttpResponse
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from backend.models import *
 from django.http import JsonResponse
+from .forms import *
 
 # Create your views here.
 
 def busqueda_test(request):
     return render(request, "pruebas.html")
 
-def busqueda_clientes (request):
+def busqueda_usuario (request):
 
     usuarios=""
 
@@ -26,4 +27,40 @@ def busqueda_clientes (request):
         usuarios = list(usuario.objects.values())
 
     return JsonResponse(usuarios, safe=False)
-    
+
+def editar_usuario(request):
+
+    return JsonResponse(True, safe=False)
+
+def eliminar_usuario(request):
+
+    if(request.GET["id"]):
+        id_usuario = request.GET["id"]
+        var_usuario =get_object_or_404(usuario, id = id_usuario)
+        var_usuario.delete()
+        return JsonResponse(True, safe=False)
+    else:
+        return JsonResponse(False, safe=False)
+        
+
+def crear_usuario(request):
+
+    datos = usuario_form()
+
+    if (request.method == "GET"):
+        datos = usuario_form(request.GET)
+
+        if datos.is_valid():
+            var_usuario = usuario()
+            var_usuario.rol = datos.cleaned_data['rol']
+            var_usuario.nombre = datos.cleaned_data['nombre']
+            var_usuario.contrasena = datos.cleaned_data['contrasena']
+
+            var_usuario.save()
+
+            return JsonResponse(True, safe=False)
+        else:
+            return JsonResponse(False, safe=False)
+
+
+

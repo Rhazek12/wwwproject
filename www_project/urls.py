@@ -19,6 +19,8 @@ from backend import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('busqueda_cliente/', views.busqueda_clientes),
+    path('busqueda_usuario/', views.busqueda_usuario),
+    path('crear_usuario/', views.crear_usuario),
+    path('eliminar_usuario/', views.eliminar_usuario),
     path('',views.busqueda_test),
 ]
