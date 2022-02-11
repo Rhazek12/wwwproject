@@ -20,4 +20,5 @@ from backend import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('busqueda_cliente/', views.busqueda_clientes),
+    path('',views.busqueda_test),
 ]
