@@ -20,7 +20,7 @@ class sede (models.Model):
 
 class caja (models.Model):
 
-    numero_caja = models.IntegerField(validators=[MaxValueValidator(100)])
+    numero_caja = models.BigIntegerField(validators=[MaxValueValidator(100)])
     tipo = models.CharField(max_length=20)
 
 class sede_caja (models.Model):
