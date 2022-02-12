@@ -13,7 +13,15 @@ def busqueda_usuario (request):
 
     usuarios=""
 
-    if(request.GET["nombre"]):
+    if(request.GET["nombre"] and request.GET["contrasena"]):
+        nombre_request = request.GET["nombre"]
+        contrsena_request = request.GET["contrasena"]
+        usuarios = list(usuario.objects.filter(nombre=nombre_request,contrasena=contrsena_request ).values())
+    elif(request.GET["id"]):
+        id_request = request.GET["id"]
+        usuarios = list(usuario.objects.filter(id=id_request).values())
+
+    elif(request.GET["nombre"]):
         nombre_request = request.GET["nombre"]
         usuarios = list(usuario.objects.filter(nombre=nombre_request).values())
         
@@ -30,7 +38,24 @@ def busqueda_usuario (request):
 
 def editar_usuario(request):
 
-    return JsonResponse(True, safe=False)
+    if(request.GET["id"]):
+        id_usuario = request.GET["id"]
+        var_usuario =get_object_or_404(usuario, id = id_usuario)
+        datos = usuario_form(request.GET)
+
+        if datos.is_valid():
+            var_usuario.rol = datos.cleaned_data['rol']
+            var_usuario.nombre = datos.cleaned_data['nombre']
+            var_usuario.contrasena = datos.cleaned_data['contrasena']
+
+            var_usuario.save()
+
+            return JsonResponse(True, safe=False)
+        else:
+            return JsonResponse(False, safe=False)
+    else:
+        return JsonResponse(False, safe=False)
+        
 
 def eliminar_usuario(request):
 

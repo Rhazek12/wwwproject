@@ -22,5 +22,6 @@ urlpatterns = [
     path('busqueda_usuario/', views.busqueda_usuario),
     path('crear_usuario/', views.crear_usuario),
     path('eliminar_usuario/', views.eliminar_usuario),
+    path('editar_usuario/', views.editar_usuario),
     path('',views.busqueda_test),
 ]
