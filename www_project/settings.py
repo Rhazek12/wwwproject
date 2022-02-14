@@ -38,10 +38,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    "corsheaders",
     'backend',
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -52,6 +54,16 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'www_project.urls'
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+    "https://vigorous-kirch-9a236d.netlify.app",
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:3000",
+    "https://vigorous-kirch-9a236d.netlify.app",
+]
 
 TEMPLATES = [
     {
