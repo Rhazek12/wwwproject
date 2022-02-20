@@ -34,16 +34,16 @@ class turno (models.Model):
     priodidad = models.BooleanField()
     tipo = models.CharField(max_length=20)
     fecha = models.DateTimeField(auto_now_add=True)
-    id_sede_caja = models.ForeignKey(sede_caja,on_delete=models.CASCADE)
+    id_cliente = models.ForeignKey(cliente,on_delete=models.CASCADE,default=0)
 
 class atencion (models.Model):
 
-    id_cliente = models.ForeignKey(cliente,on_delete=models.CASCADE)
     id_turno = models.ForeignKey(turno,on_delete=models.CASCADE)
     id_sede_caja = models.ForeignKey(sede_caja,on_delete=models.CASCADE)
 
 class usuario_sede_caja (models.Model):
-    id_usuario = models.ForeignKey(usuario,on_delete=models.CASCADE)
+
+    id_usuario = models.ForeignKey(usuario,on_delete=models.CASCADE,default=0)
     id_sede_caja = models.ForeignKey(sede_caja,on_delete=models.CASCADE)
     fecha = models.DateTimeField(auto_now_add=True)
 

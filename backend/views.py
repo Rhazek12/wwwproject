@@ -303,3 +303,215 @@ def crear_caja(request):
     return JsonResponse(False, safe=False)
 #------------------------------------------------------------------------------------------
 
+#CRUD DE SEDE_CAJA
+
+def busqueda_sede_caja (request):
+
+    sede_cajas=""
+
+    if(request.GET["id_sede"]):
+        id_sede_request = request.GET["id_sede"]
+        sede_cajas = list(sede_caja.objects.filter(id_sede=id_sede_request).values())
+    elif(request.GET["id_caja"]):
+        id_caja_request = request.GET["id_caja"]
+        sede_cajas = list(sede_caja.objects.filter(id_caja=id_caja_request).values())
+    elif(request.GET["id"]):
+        id_request = request.GET["id"]
+        sede_cajas = list(sede_caja.objects.filter(id=id_request).values())
+    else:
+        sede_cajas = list(sede_caja.objects.values())
+
+    return JsonResponse(sede_cajas, safe=False)
+
+def editar_sede_caja(request):
+
+    if(request.GET["id"]):
+        id_sede_caja = request.GET["id"]
+        var_sede_caja =get_object_or_404(sede_caja, id = id_sede_caja)
+        datos = sede_caja_form(request.GET)
+
+        if datos.is_valid():
+            var_sede_caja.id_sede = datos.cleaned_data['id_sede']
+            var_sede_caja.id_caja = datos.cleaned_data['id_caja']
+            var_sede_caja.save()
+
+            return JsonResponse(True, safe=False)
+        else:
+            return JsonResponse(False, safe=False)
+    else:
+        return JsonResponse(False, safe=False)
+        
+
+def eliminar_sede_caja(request):
+
+    if(request.GET["id"]):
+        id_sede_caja = request.GET["id"]
+        var_sede_caja =get_object_or_404(sede_caja, id = id_sede_caja)
+        var_sede_caja.delete()
+        return JsonResponse(True, safe=False)
+    else:
+        return JsonResponse(False, safe=False)
+        
+
+def crear_sede_caja(request):
+
+    datos = sede_caja_form()
+
+    if (request.method == "GET"):
+        datos = sede_caja_form(request.GET)
+
+        if datos.is_valid():
+            var_sede_caja= sede_caja()
+            var_sede_caja.id_sede= datos.cleaned_data['id_sede']
+            var_sede_caja.id_caja = datos.cleaned_data['id_caja']
+
+            var_sede_caja.save()
+
+            return JsonResponse(True, safe=False)
+        else:
+            return JsonResponse(False, safe=False)
+
+    return JsonResponse(False, safe=False)
+#------------------------------------------------------------------------------------------
+
+#CRUD DE ATENCION
+
+def busqueda_atencion(request):
+
+    atenciones=""
+
+    if(request.GET["id_turno"]):
+        id_turno_request = request.GET["id_turno"]
+        atenciones = list(atencion.objects.filter(id_turno=id_turno_request).values())
+    elif(request.GET["id_sede_caja"]):
+        id_sede_caja_request = request.GET["id_sede_caja"]
+        atenciones = list(atencion.objects.filter(id_sede_caja=id_sede_caja_request).values())
+    elif(request.GET["id"]):
+        id_request = request.GET["id"]
+        atenciones = list(atencion.objects.filter(id=id_request).values())
+    else:
+        atenciones = list(atencion.objects.values())
+
+    return JsonResponse(atenciones, safe=False)
+
+def editar_atencion(request):
+
+    if(request.GET["id"]):
+        id_atencion = request.GET["id"]
+        var_atencion =get_object_or_404(atencion, id = id_atencion)
+        datos = atencion_form(request.GET)
+
+        if datos.is_valid():
+            var_atencion.id_turno = datos.cleaned_data['id_turno']
+            var_atencion.id_sede_caja = datos.cleaned_data['id_sede_caja']
+            var_atencion.save()
+
+            return JsonResponse(True, safe=False)
+        else:
+            return JsonResponse(False, safe=False)
+    else:
+        return JsonResponse(False, safe=False)
+        
+
+def eliminar_atencion(request):
+
+    if(request.GET["id"]):
+        id_atencion = request.GET["id"]
+        var_atencion =get_object_or_404(atencion, id = id_atencion)
+        var_atencion.delete()
+        return JsonResponse(True, safe=False)
+    else:
+        return JsonResponse(False, safe=False)
+        
+
+def crear_atencion(request):
+
+    datos = atencion_form()
+
+    if (request.method == "GET"):
+        datos = atencion_form(request.GET)
+
+        if datos.is_valid():
+            var_atencion= atencion()
+            var_atencion.id_turno= datos.cleaned_data['id_turno']
+            var_atencion.id_sede_caja = datos.cleaned_data['id_sede_caja']
+
+            var_atencion.save()
+
+            return JsonResponse(True, safe=False)
+        else:
+            return JsonResponse(False, safe=False)
+
+    return JsonResponse(False, safe=False)
+#------------------------------------------------------------------------------------------
+
+#CRUD DE USUARIO_SEDE_CAJA
+
+def busqueda_usuario_sede_caja(request):
+
+    usuario_sede_cajas=""
+
+    if(request.GET["id_usuario"]):
+        id_usuario_request = request.GET["id_usuario"]
+        usuario_sede_cajas = list(usuario_sede_caja.objects.filter(id_usuario=id_usuario_request).values())
+    elif(request.GET["id_sede_caja"]):
+        id_sede_caja_request = request.GET["id_sede_caja"]
+        usuario_sede_cajas = list(usuario_sede_caja.objects.filter(id_sede_caja=id_sede_caja_request).values())
+    elif(request.GET["id"]):
+        id_request = request.GET["id"]
+        usuario_sede_cajas = list(usuario_sede_caja.objects.filter(id=id_request).values())
+    else:
+        usuario_sede_cajas = list(usuario_sede_caja.objects.values())
+
+    return JsonResponse(usuario_sede_cajas, safe=False)
+
+def editar_usuario_sede_caja(request):
+
+    if(request.GET["id"]):
+        id_usuario_sede_caja = request.GET["id"]
+        var_usuario_sede_caja =get_object_or_404(usuario_sede_caja, id = id_usuario_sede_caja)
+        datos = usuario_sede_caja_form(request.GET)
+
+        if datos.is_valid():
+            var_usuario_sede_caja.id_usuario = datos.cleaned_data['id_usuario']
+            var_usuario_sede_caja.id_sede_caja = datos.cleaned_data['id_sede_caja']
+            var_usuario_sede_caja.save()
+
+            return JsonResponse(True, safe=False)
+        else:
+            return JsonResponse(False, safe=False)
+    else:
+        return JsonResponse(False, safe=False)
+        
+
+def eliminar_usuario_sede_caja(request):
+
+    if(request.GET["id"]):
+        id_usuario_sede_caja = request.GET["id"]
+        var_usuario_sede_caja =get_object_or_404(usuario_sede_caja, id = id_usuario_sede_caja)
+        var_usuario_sede_caja.delete()
+        return JsonResponse(True, safe=False)
+    else:
+        return JsonResponse(False, safe=False)
+        
+
+def crear_usuario_sede_caja(request):
+
+    datos = usuario_sede_caja_form()
+
+    if (request.method == "GET"):
+        datos = usuario_sede_caja_form(request.GET)
+
+        if datos.is_valid():
+            var_usuario_sede_caja= usuario_sede_caja()
+            var_usuario_sede_caja.id_usuario= datos.cleaned_data['id_usuario']
+            var_usuario_sede_caja.id_sede_caja = datos.cleaned_data['id_sede_caja']
+
+            var_usuario_sede_caja.save()
+
+            return JsonResponse(True, safe=False)
+        else:
+            return JsonResponse(False, safe=False)
+
+    return JsonResponse(False, safe=False)
+#------------------------------------------------------------------------------------------
