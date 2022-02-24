@@ -25,10 +25,9 @@ class sede_caja_form(forms.Form):
 
 class turno_form (forms.Form):
 
-    codigo = forms.CharField(max_length=5,required=True)
-    priodidad = forms.BooleanField(required=True)
-    tipo = forms.CharField(max_length=20)
-    id_cliente = forms.IntegerField(required=True)
+    prioridad = forms.BooleanField(required=False)
+    tipo = forms.CharField(max_length=20,required=True)
+    cedula_cliente = forms.IntegerField(required=True)
 
 class atencion_form (forms.Form):
     

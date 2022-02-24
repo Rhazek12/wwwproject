@@ -181,5 +181,33 @@
         </form>
         <hr>
         <br>
+        <br>
+        <h2>Crear Turno</h2>
+        <br>
+        <form action="crear_turno/" method="GET">
+            <label>Tipo</label>
+            <input type="text" name="tipo">
+            <label>Cliente</label>
+            <input type="text" name="cedula_cliente">
+            <label>prioridad</label>
+            <input type="text" name="prioridad">
+            <input type="submit" value="enviar">
+        </form>
+        <br>
+        <br>
+        <h2>Buscar Turno</h2>
+        <br>
+        <form action="busqueda_turno/" method="GET">
+            <label>codigo</label>
+            <input type="text" name="codigo">
+            <label>Tipo</label>
+            <input type="text" name="tipo">
+            <label>Cliente</label>
+            <input type="text" name="cedula_cliente">
+            <label>prioridad</label>
+            <input type="text" name="prioridad">
+            <input type="submit" value="enviar">
+        </form>
+        <br>
     </body>
 </html>

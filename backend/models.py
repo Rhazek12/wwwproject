@@ -1,5 +1,6 @@
 from django.db import models
 from django.core.validators import MaxValueValidator
+from django.utils.timezone import datetime
 
 # Create your models here.
 
@@ -30,8 +31,8 @@ class sede_caja (models.Model):
 
 class turno (models.Model):
 
-    codigo= models.CharField(max_length=5)
-    priodidad = models.BooleanField()
+    codigo= models.IntegerField(validators=[MaxValueValidator(1000)])
+    prioridad = models.BooleanField()
     tipo = models.CharField(max_length=20)
     fecha = models.DateTimeField(auto_now_add=True)
     id_cliente = models.ForeignKey(cliente,on_delete=models.CASCADE,default=0)
@@ -40,6 +41,7 @@ class atencion (models.Model):
 
     id_turno = models.ForeignKey(turno,on_delete=models.CASCADE)
     id_sede_caja = models.ForeignKey(sede_caja,on_delete=models.CASCADE)
+    fecha = models.DateTimeField( auto_now_add=True)
 
 class usuario_sede_caja (models.Model):
 

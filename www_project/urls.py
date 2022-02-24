@@ -47,5 +47,9 @@ urlpatterns = [
     path('crear_usuario_sede_caja/', views.crear_usuario_sede_caja),
     path('eliminar_usuario_sede_caja/', views.eliminar_usuario_sede_caja),
     path('editar_usuario_sede_caja/', views.editar_usuario_sede_caja),
+    path('busqueda_turno/', views.busqueda_turno),
+    path('crear_turno/', views.crear_turno),
+    path('eliminar_turno/', views.eliminar_turno),
+    path('editar_turno/', views.editar_turno),
     path('',views.busqueda_test),
 ]

@@ -3,6 +3,7 @@ from django.shortcuts import render, get_object_or_404
 from backend.models import *
 from django.http import JsonResponse
 from .forms import *
+from datetime import datetime
 
 # Create your views here.
 
@@ -361,9 +362,13 @@ def crear_sede_caja(request):
         datos = sede_caja_form(request.GET)
 
         if datos.is_valid():
+            id_sede= request.GET["id_sede"]
+            id_caja= request.GET["id_caja"]
+            var_sede =get_object_or_404(sede, id = id_sede)
+            var_caja =get_object_or_404(caja, id = id_caja)
             var_sede_caja= sede_caja()
-            var_sede_caja.id_sede= datos.cleaned_data['id_sede']
-            var_sede_caja.id_caja = datos.cleaned_data['id_caja']
+            var_sede_caja.id_sede= var_sede
+            var_sede_caja.id_caja = var_caja
 
             var_sede_caja.save()
 
@@ -432,9 +437,13 @@ def crear_atencion(request):
         datos = atencion_form(request.GET)
 
         if datos.is_valid():
+            id_sede_caja= request.GET["id_sede_caja"]
+            id_turno= request.GET["id_turno"]
+            var_sede_caja =get_object_or_404(sede_caja, id = id_sede_caja)
+            var_turno =get_object_or_404(turno, id = id_turno)
             var_atencion= atencion()
-            var_atencion.id_turno= datos.cleaned_data['id_turno']
-            var_atencion.id_sede_caja = datos.cleaned_data['id_sede_caja']
+            var_atencion.id_turno= var_turno
+            var_atencion.id_sede_caja = var_sede_caja
 
             var_atencion.save()
 
@@ -503,9 +512,13 @@ def crear_usuario_sede_caja(request):
         datos = usuario_sede_caja_form(request.GET)
 
         if datos.is_valid():
+            id_sede_caja= request.GET["id_sede_caja"]
+            id_usuario= request.GET["id_usuario"]
+            var_sede_caja =get_object_or_404(sede_caja, id = id_sede_caja)
+            var_usuario =get_object_or_404(usuario, id = id_usuario)
             var_usuario_sede_caja= usuario_sede_caja()
-            var_usuario_sede_caja.id_usuario= datos.cleaned_data['id_usuario']
-            var_usuario_sede_caja.id_sede_caja = datos.cleaned_data['id_sede_caja']
+            var_usuario_sede_caja.id_usuario= var_usuario
+            var_usuario_sede_caja.id_sede_caja = var_sede_caja
 
             var_usuario_sede_caja.save()
 
@@ -515,3 +528,108 @@ def crear_usuario_sede_caja(request):
 
     return JsonResponse(False, safe=False)
 #------------------------------------------------------------------------------------------
+
+#CRUD DE TURNO
+
+def busqueda_turno(request):
+
+    turnos=""
+
+    if(request.GET["codigo"]):
+        codigo_request = request.GET["codigo"]
+        turnos = list(turno.objects.filter(codigo=codigo_request).values())
+    elif(request.GET["prioridad"]):
+        prioridad_request = request.GET["prioridad"]
+        turnos = list(turno.objects.filter(prioridad=prioridad_request).values())
+    elif(request.GET["tipo"]):
+        tipo_request = request.GET["tipo"]
+        turnos = list(turno.objects.filter(tipo=tipo_request).values())
+    elif(request.GET["cedula_cliente"]):
+        cedula_cliente_request = request.GET["cedula_cliente"]
+        var_cliente =get_object_or_404(cliente, cedula = cedula_cliente_request)
+        id_cliente_request = var_cliente.id
+        turnos = list(turno.objects.filter(id_cliente=id_cliente_request).values())
+    elif(request.GET["id"]):
+        id_request = request.GET["id"]
+        turnos = list(turno.objects.filter(id=id_request).values())
+    else:
+        turnos = list(turno.objects.values())
+
+    return JsonResponse(turnos, safe=False)
+
+def editar_turno(request):
+
+    if(request.GET["id"]):
+        id_turno = request.GET["id"]
+        var_turno =get_object_or_404(turno, id = id_turno)
+        datos = turno_form(request.GET)
+
+        if datos.is_valid():
+            var_turno.codigo = datos.cleaned_data['codigo']
+            var_turno.prioridad = datos.cleaned_data['prioridad']
+            var_turno.tipo = datos.cleaned_data['tipo']
+            var_turno.id_cliente = datos.cleaned_data['id_cliente']
+            var_turno.save()
+
+            return JsonResponse(True, safe=False)
+        else:
+            return JsonResponse(False, safe=False)
+    else:
+        return JsonResponse(False, safe=False)
+        
+
+def eliminar_turno(request):
+
+    if(request.GET["id"]):
+        id_turno = request.GET["id"]
+        var_turno =get_object_or_404(turno, id = id_turno)
+        var_turno.delete()
+        return JsonResponse(True, safe=False)
+    else:
+        return JsonResponse(False, safe=False)
+        
+
+def crear_turno(request):
+
+    datos = turno_form()
+
+    if (request.method == "GET"):
+        datos = turno_form(request.GET)
+        fecha_actual=datetime.today().strftime('%Y-%m-%d')
+        ultimo_regsitro = turno.objects.filter().last()
+        ultima_fecha= ultimo_regsitro.fecha
+        ultima_fecha = ultima_fecha.strftime('%Y-%m-%d')
+        ultimo_codigo = ultimo_regsitro.codigo
+        if(request.GET["prioridad"]):
+            prioridad_dada = True
+        else:
+            prioridad_dada = False
+        cedula_cliente= request.GET["cedula_cliente"]
+        var_cliente =get_object_or_404(cliente, cedula = cedula_cliente)
+        
+        if datos.is_valid():
+            if (fecha_actual == ultima_fecha):
+                codigo_generado = ultimo_codigo + 1
+                var_turno= turno()
+                var_turno.prioridad = prioridad_dada
+                var_turno.tipo = datos.cleaned_data['tipo']
+                var_turno.id_cliente = var_cliente
+                var_turno.codigo = codigo_generado
+                var_turno.save()
+            else:
+                codigo_generado = 1
+                var_turno= turno()
+                var_turno.prioridad = prioridad_dada
+                var_turno.tipo = datos.cleaned_data['tipo']
+                var_turno.id_cliente = var_cliente
+                var_turno.codigo = codigo_generado
+                var_turno.save()
+
+            return JsonResponse(True, safe=False)
+        else:
+            return JsonResponse('hola', safe=False)
+    
+    return JsonResponse('hola2', safe=False)
+#------------------------------------------------------------------------------------------
+
+#PRIORIDAD DE TURNO
