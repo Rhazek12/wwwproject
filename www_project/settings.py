@@ -57,12 +57,12 @@ ROOT_URLCONF = 'www_project.urls'
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
-    "https://*vigorous-kirch-9a236d.netlify.app",
+    'https://*vigorous-kirch-9a236d.netlify.app',
 ]
 
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:3000",
-    "https://*vigorous-kirch-9a236d.netlify.app",
+    'https://*vigorous-kirch-9a236d.netlify.app',
 ]
 
 TEMPLATES = [
