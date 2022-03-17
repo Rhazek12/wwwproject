@@ -8,7 +8,7 @@ class usuario (models.Model):
 
     rol= models.CharField(max_length=20)
     nombre= models.CharField(max_length=30)
-    contrasena= models.CharField(max_length=30)
+    contrasena= models.CharField(max_length=300)
 
 class cliente (models.Model):
 

@@ -4,6 +4,8 @@ from backend.models import *
 from django.http import JsonResponse
 from .forms import *
 from datetime import datetime
+from django.contrib.auth.hashers import make_password, check_password
+
 
 # Create your views here.
 #Variables globales
@@ -13,6 +15,11 @@ lista_ie = []
 lista_s = []
 lista_d = []
 lista_vip = []
+
+#View de Home:
+
+def home(request):
+    return render(request, "home.html")
 
 #SOLO PARA HACER PRUEBAS EN EL BACKEND:
 
@@ -29,8 +36,10 @@ def busqueda_usuario (request):
 
     if(request.GET["nombre"] and request.GET["contrasena"]):
         nombre_request = request.GET["nombre"]
-        contrsena_request = request.GET["contrasena"]
-        usuarios = list(usuario.objects.filter(nombre=nombre_request,contrasena=contrsena_request ).values())
+        var_usuario =get_object_or_404(usuario, nombre = nombre_request)
+        contrsena_request =check_password( request.GET["contrasena"],var_usuario.contrasena)
+        if (contrsena_request == True):
+            usuarios = list(usuario.objects.filter(nombre=nombre_request).values())
     elif(request.GET["id"]):
         id_request = request.GET["id"]
         usuarios = list(usuario.objects.filter(id=id_request).values())
@@ -42,9 +51,6 @@ def busqueda_usuario (request):
     elif(request.GET["rol"]):
         rol_request = request.GET["rol"]
         usuarios = list(usuario.objects.filter(rol=rol_request).values())
-    elif(request.GET["contrasena"]):
-        contrsena_request = request.GET["contrasena"]
-        usuarios = list(usuario.objects.filter(contrasena=contrsena_request).values())
     else:
         usuarios = list(usuario.objects.values())
 
@@ -60,7 +66,7 @@ def editar_usuario(request):
         if datos.is_valid():
             var_usuario.rol = datos.cleaned_data['rol']
             var_usuario.nombre = datos.cleaned_data['nombre']
-            var_usuario.contrasena = datos.cleaned_data['contrasena']
+            var_usuario.contrasena = make_password(datos.cleaned_data['contrasena'])
 
             var_usuario.save()
 
@@ -93,7 +99,7 @@ def crear_usuario(request):
             var_usuario = usuario()
             var_usuario.rol = datos.cleaned_data['rol']
             var_usuario.nombre = datos.cleaned_data['nombre']
-            var_usuario.contrasena = datos.cleaned_data['contrasena']
+            var_usuario.contrasena = make_password(datos.cleaned_data['contrasena'])
 
             var_usuario.save()
 
@@ -392,7 +398,11 @@ def busqueda_atencion(request):
 
     atenciones=""
 
-    if(request.GET["id_turno"]):
+    if(request.GET["id_turno"] and request.GET["id_sede_caja"]):
+        id_turno_request = request.GET["id_turno"]
+        id_sede_caja_request = request.GET["id_sede_caja"]
+        atenciones = list(atencion.objects.filter(id_turno=id_turno_request,id_sede_caja=id_sede_caja_request).values())
+    elif(request.GET["id_turno"]):
         id_turno_request = request.GET["id_turno"]
         atenciones = list(atencion.objects.filter(id_turno=id_turno_request).values())
     elif(request.GET["id_sede_caja"]):
