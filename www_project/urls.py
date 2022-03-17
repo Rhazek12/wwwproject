@@ -51,5 +51,6 @@ urlpatterns = [
     path('crear_turno/', views.crear_turno),
     path('eliminar_turno/', views.eliminar_turno),
     path('editar_turno/', views.editar_turno),
+    path('pedir_turno/', views.pedir_turno),
     path('',views.busqueda_test),
 ]

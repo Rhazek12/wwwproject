@@ -6,6 +6,13 @@ from .forms import *
 from datetime import datetime
 
 # Create your views here.
+#Variables globales
+lista_turnos = []
+lista_g = []
+lista_ie = []
+lista_s = []
+lista_d = []
+lista_vip = []
 
 #SOLO PARA HACER PRUEBAS EN EL BACKEND:
 
@@ -429,18 +436,15 @@ def eliminar_atencion(request):
         return JsonResponse(False, safe=False)
         
 
-def crear_atencion(request):
+def crear_atencion(turno_atendido,sede_caja_que_atiende):
 
-    datos = atencion_form()
+    if (turno_atendido and sede_caja_que_atiende):
+        datos = True
 
-    if (request.method == "GET"):
-        datos = atencion_form(request.GET)
+        if (datos == True):
 
-        if datos.is_valid():
-            id_sede_caja= request.GET["id_sede_caja"]
-            id_turno= request.GET["id_turno"]
-            var_sede_caja =get_object_or_404(sede_caja, id = id_sede_caja)
-            var_turno =get_object_or_404(turno, id = id_turno)
+            var_turno= get_object_or_404(turno, id = turno_atendido)
+            var_sede_caja =get_object_or_404(sede_caja, id = sede_caja_que_atiende)
             var_atencion= atencion()
             var_atencion.id_turno= var_turno
             var_atencion.id_sede_caja = var_sede_caja
@@ -616,6 +620,9 @@ def crear_turno(request):
                 var_turno.id_cliente = var_cliente
                 var_turno.codigo = codigo_generado
                 var_turno.save()
+                #Aquí se almacena el turno en la lista
+                turno_lista = {codigo_generado : datos.cleaned_data['tipo']}
+                almacenar_turno(turno_lista, prioridad_dada)
             else:
                 codigo_generado = 1
                 var_turno= turno()
@@ -624,12 +631,195 @@ def crear_turno(request):
                 var_turno.id_cliente = var_cliente
                 var_turno.codigo = codigo_generado
                 var_turno.save()
+                #Aquí se almacena el turno en la lista
+                turno_lista = {codigo_generado : datos.cleaned_data['tipo']}
+                limpiar_listas()
+                almacenar_turno(turno_lista,prioridad_dada)
 
             return JsonResponse(True, safe=False)
         else:
-            return JsonResponse('hola', safe=False)
+            return JsonResponse(False, safe=False)
     
-    return JsonResponse('hola2', safe=False)
+    return JsonResponse(False, safe=False)
 #------------------------------------------------------------------------------------------
 
 #PRIORIDAD DE TURNO
+
+def almacenar_turno(turno_nuevo, prioridad):
+
+    global lista_turnos
+    global lista_g
+    global lista_ie
+    global lista_s
+    global lista_d
+    global lista_vip
+    lista_turnos.append(turno_nuevo)
+    elementos = [*turno_nuevo.values() ]
+    if(elementos[0] == "G"):
+        lista_g.append(turno_nuevo)
+        print ("es de tipo g")
+    elif(elementos[0] == "IE"):
+        lista_ie.append(turno_nuevo)
+        print ("es de tipo ie")
+    elif(elementos[0] == "S"):
+        lista_s.append(turno_nuevo)
+        print ("es de tipo s")
+    elif(elementos[0] == "D"):
+        lista_d.append(turno_nuevo)
+        print ("es de tipo d")
+    else:
+        print ("tipo no valido")
+    
+    if(prioridad == True):
+        lista_vip.append(turno_nuevo)
+        print ("es vip el cabron")
+
+    print("lista:" + str(lista_turnos))
+    print("lista g:" + str(lista_g))
+    print("lista ie:" + str(lista_ie))
+    print("lista s:" + str(lista_s))
+    print("lista d:" + str(lista_d))
+    print("lista vip:" + str(lista_vip))
+    return lista_turnos
+
+def pedir_turno(request):
+
+    siguiente_turno = {}
+    global lista_turnos
+    global lista_g
+    global lista_ie
+    global lista_s
+    global lista_d
+    global lista_vip
+    tipo_de_caja = request.GET["tipo"]
+    if(tipo_de_caja == 'G'):
+        if(len(lista_g)>0):
+            siguiente_turno= lista_g.pop(0)
+            lista_turnos.remove(siguiente_turno)
+            if (lista_vip.count(siguiente_turno)>0):
+                lista_vip.remove(siguiente_turno)
+        elif(len(lista_turnos)>0):
+            siguiente_turno = lista_turnos.pop(0)
+            if (lista_vip.count(siguiente_turno)>0):
+                lista_vip.remove(siguiente_turno)
+            if (lista_ie.count(siguiente_turno)>0):
+                lista_ie.remove(siguiente_turno)
+            if (lista_s.count(siguiente_turno)>0):
+                lista_s.remove(siguiente_turno)
+            if (lista_d.count(siguiente_turno)>0):
+                lista_d.remove(siguiente_turno)
+        else:
+            print("no hay turnos por atender")
+    elif(tipo_de_caja == 'IE'):
+        if(len(lista_ie)>0):
+            siguiente_turno = lista_ie.pop(0)
+            lista_turnos.remove(siguiente_turno)
+            if (lista_vip.count(siguiente_turno)>0):
+                lista_vip.remove(siguiente_turno)
+        elif(len(lista_turnos)>0):
+            siguiente_turno = lista_turnos.pop(0)
+            if (lista_vip.count(siguiente_turno)>0):
+                lista_vip.remove(siguiente_turno)
+            if (lista_g.count(siguiente_turno)>0):
+                lista_g.remove(siguiente_turno)
+            if (lista_s.count(siguiente_turno)>0):
+                lista_s.remove(siguiente_turno)
+            if (lista_d.count(siguiente_turno)>0):
+                lista_d.remove(siguiente_turno)
+        else:
+            print("no hay turnos por atender")
+    elif(tipo_de_caja == 'S'):
+        if(len(lista_s)>0):
+            siguiente_turno = lista_s.pop(0)
+            lista_turnos.remove(siguiente_turno)
+            if (lista_vip.count(siguiente_turno)>0):
+                lista_vip.remove(siguiente_turno)
+        elif(len(lista_turnos)>0):
+            siguiente_turno = lista_turnos.pop(0)
+            if (lista_vip.count(siguiente_turno)>0):
+                lista_vip.remove(siguiente_turno)
+            if (lista_ie.count(siguiente_turno)>0):
+                lista_ie.remove(siguiente_turno)
+            if (lista_g.count(siguiente_turno)>0):
+                lista_g.remove(siguiente_turno)
+            if (lista_d.count(siguiente_turno)>0):
+                lista_d.remove(siguiente_turno)
+        else:
+            print("no hay turnos por atender")
+    elif(tipo_de_caja == 'D'):
+        if(len(lista_d)>0):
+            siguiente_turno = lista_d.pop(0)
+            lista_turnos.remove(siguiente_turno)
+            if (lista_vip.count(siguiente_turno)>0):
+                lista_vip.remove(siguiente_turno)
+        elif(len(lista_turnos)>0):
+            siguiente_turno = lista_turnos.pop(0)
+            if (lista_vip.count(siguiente_turno)>0):
+                lista_vip.remove(siguiente_turno)
+            if (lista_ie.count(siguiente_turno)>0):
+                lista_ie.remove(siguiente_turno)
+            if (lista_s.count(siguiente_turno)>0):
+                lista_s.remove(siguiente_turno)
+            if (lista_g.count(siguiente_turno)>0):
+                lista_g.remove(siguiente_turno)
+        else:
+            print("no hay turnos por atender")
+    elif(tipo_de_caja == 'VIP'):
+        if(len(lista_vip)>0):
+            siguiente_turno = lista_vip.pop(0)
+            lista_turnos.remove(siguiente_turno)
+            if (lista_g.count(siguiente_turno)>0):
+                lista_g.remove(siguiente_turno)
+            if (lista_ie.count(siguiente_turno)>0):
+                lista_ie.remove(siguiente_turno)
+            if (lista_s.count(siguiente_turno)>0):
+                lista_s.remove(siguiente_turno)
+            if (lista_d.count(siguiente_turno)>0):
+                lista_d.remove(siguiente_turno)
+        elif(len(lista_turnos)>0):
+            siguiente_turno = lista_turnos.pop(0)
+            if (lista_g.count(siguiente_turno)>0):
+                lista_g.remove(siguiente_turno)
+            if (lista_ie.count(siguiente_turno)>0):
+                lista_ie.remove(siguiente_turno)
+            if (lista_s.count(siguiente_turno)>0):
+                lista_s.remove(siguiente_turno)
+            if (lista_d.count(siguiente_turno)>0):
+                lista_d.remove(siguiente_turno)
+        else:
+            print("no hay turnos por atender")
+    else:
+        print("tipo incorrecto")
+    print(siguiente_turno)
+    siguiente_turno_tipo = [*siguiente_turno.values()]
+    siguiente_turno_codigo =[*siguiente_turno.keys() ]
+    turno_json = {"tipo":str(siguiente_turno_tipo[0]),"codigo":int(siguiente_turno_codigo[0])}
+
+    #creando registro de atención
+    turnos = list(turno.objects.filter(codigo=int(siguiente_turno_codigo[0]), tipo=str(siguiente_turno_tipo[0])).values())
+    elemento_turnos = turnos[0]
+    turno_id =elemento_turnos["id"]
+    print(turno_id)
+    id_de_sede_caja = request.GET["id_sede_caja"]
+    crear_atencion(turno_id,id_de_sede_caja)
+
+    return JsonResponse(turno_json, safe=False)
+
+def limpiar_listas():
+    global lista_turnos
+    lista_turnos.clear()
+    global lista_g
+    lista_g.clear()
+    global lista_ie
+    lista_ie.clear()
+    global lista_s
+    lista_s.clear()
+    global lista_d
+    lista_d.clear()
+    global lista_vip
+    lista_vip.clear()
+    return True
+
+#------------------------------------------------------------------------------------------
+
+#ESTADISTICAS
