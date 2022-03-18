@@ -55,5 +55,5 @@ urlpatterns = [
     path('estadistica_turnos_vip/', views.estadistica_turnos_vip),
     path('estadistica_turnos_por_sede/', views.estadistica_turnos_por_sede),
     path('estadistica_turnos_por_tipo/', views.estadistica_turnos_por_tipo),
-    path('',views.busqueda_test),
+    path('',views.home),
 ]
