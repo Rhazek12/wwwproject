@@ -19,7 +19,7 @@ lista_vip = []
 #View de Home:
 
 def home(request):
-    return render(request, "home.html")
+    return render(request, "index.html")
 
 #SOLO PARA HACER PRUEBAS EN EL BACKEND:
 
