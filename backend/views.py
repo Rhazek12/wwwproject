@@ -154,24 +154,21 @@ def eliminar_cliente(request):
         return JsonResponse(False, safe=False)
         
 
-def crear_cliente(request):
+def crear_cliente(cedula):
 
-    datos = cliente_form()
 
-    if (request.method == "GET"):
-        datos = cliente_form(request.GET)
+    if (cedula):
 
-        if datos.is_valid():
-            var_cliente = cliente()
-            var_cliente.cedula = datos.cleaned_data['cedula']
 
-            var_cliente.save()
+        var_cliente = cliente()
+        var_cliente.cedula = cedula
 
-            return JsonResponse(True, safe=False)
-        else:
-            return JsonResponse(False, safe=False)
+        var_cliente.save()
 
-    return JsonResponse(False, safe=False)
+        return JsonResponse(True, safe=False)
+    else:
+        return JsonResponse(False, safe=False)
+
 
 #------------------------------------------------------------------------------------------
 
@@ -619,8 +616,13 @@ def crear_turno(request):
         else:
             prioridad_dada = False
         cedula_cliente= request.GET["cedula_cliente"]
-        var_cliente =get_object_or_404(cliente, cedula = cedula_cliente)
-        
+        clientes = list(cliente.objects.filter(cedula=cedula_cliente).values())
+        if (clientes == []):
+            crear_cliente(int(cedula_cliente))
+            var_cliente =get_object_or_404(cliente, cedula = cedula_cliente)
+        else:
+            var_cliente =get_object_or_404(cliente, cedula = cedula_cliente)
+             
         if datos.is_valid():
             if (fecha_actual == ultima_fecha):
                 codigo_generado = ultimo_codigo + 1
