@@ -52,5 +52,8 @@ urlpatterns = [
     path('eliminar_turno/', views.eliminar_turno),
     path('editar_turno/', views.editar_turno),
     path('pedir_turno/', views.pedir_turno),
-    path('',views.home),
+    path('estadistica_turnos_vip/', views.estadistica_turnos_vip),
+    path('estadistica_turnos_por_sede/', views.estadistica_turnos_por_sede),
+    path('estadistica_turnos_por_tipo/', views.estadistica_turnos_por_tipo),
+    path('',views.busqueda_test),
 ]

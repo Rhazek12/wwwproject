@@ -835,3 +835,59 @@ def limpiar_listas():
 #------------------------------------------------------------------------------------------
 
 #ESTADISTICAS
+
+def estadistica_turnos_por_sede(request):
+    lista_json = []
+    if(request.GET["id_sede"]):
+        id_sede_request = request.GET["id_sede"]
+        sede_cajas = list(sede_caja.objects.filter(id_sede=id_sede_request).values('id', 'id_caja'))
+        i=0
+        while i < len(sede_cajas):
+            elemento_id = sede_cajas[i]
+            sede_caja_id =elemento_id["id"]
+            caja_id =elemento_id["id_caja"]
+            nombre_dic = list(caja.objects.filter(id=caja_id).values("tipo"))
+            atenciones = len(list(atencion.objects.filter(id_sede_caja=sede_caja_id).values()))
+            prenombre = nombre_dic[0]
+            nombre = prenombre["tipo"]
+            print (nombre_dic)
+            dic ={nombre:atenciones}
+            lista_json.append(dic)
+            i=i+1
+    return JsonResponse(lista_json, safe=False)
+
+def estadistica_turnos_vip():
+
+    turnos_totales = len(list(turno.objects.values()))
+    turnos_true = len(list(turno.objects.filter(prioridad=True).values()))
+    turnos_false = turnos_totales - turnos_true
+    porcentaje_true = int ((turnos_true/turnos_totales)*100)
+    porcentaje_false =100 - porcentaje_true
+
+    estadisticas_json = {"vipdato":turnos_true,
+                        "novipdato":turnos_false,
+                        "vipporc":porcentaje_true,
+                        "novipporc":porcentaje_false}
+    
+    return JsonResponse(estadisticas_json, safe=False)
+
+def estadistica_turnos_por_tipo():
+    turnos_totales = len(list(turno.objects.values()))
+    turnos_g = len(list(turno.objects.filter(tipo="G").values()))
+    porcentaje_g = int ((turnos_g/turnos_totales)*100)
+    turnos_ie = len(list(turno.objects.filter(tipo="IE").values()))
+    porcentaje_ie = int ((turnos_ie/turnos_totales)*100)
+    turnos_s = len(list(turno.objects.filter(tipo="S").values()))
+    porcentaje_s = int ((turnos_s/turnos_totales)*100)
+    turnos_d = len(list(turno.objects.filter(tipo="D").values()))
+    porcentaje_d = 100 - (porcentaje_s + porcentaje_ie + porcentaje_g)
+    estadisticas_json = {"turnosg":turnos_g,
+                        "turnosie":turnos_ie,
+                        "turnoss":turnos_s,
+                        "turnosd":turnos_d,
+                        "porcg":porcentaje_g,
+                        "procie":porcentaje_ie,
+                        "porcs":porcentaje_s,
+                        "porcd":porcentaje_d}
+    
+    return JsonResponse(estadisticas_json, safe=False)
