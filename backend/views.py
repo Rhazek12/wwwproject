@@ -856,7 +856,7 @@ def estadistica_turnos_por_sede(request):
             i=i+1
     return JsonResponse(lista_json, safe=False)
 
-def estadistica_turnos_vip():
+def estadistica_turnos_vip(request):
 
     turnos_totales = len(list(turno.objects.values()))
     turnos_true = len(list(turno.objects.filter(prioridad=True).values()))
@@ -871,7 +871,7 @@ def estadistica_turnos_vip():
     
     return JsonResponse(estadisticas_json, safe=False)
 
-def estadistica_turnos_por_tipo():
+def estadistica_turnos_por_tipo(request):
     turnos_totales = len(list(turno.objects.values()))
     turnos_g = len(list(turno.objects.filter(tipo="G").values()))
     porcentaje_g = int ((turnos_g/turnos_totales)*100)
